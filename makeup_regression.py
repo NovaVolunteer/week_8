@@ -138,6 +138,9 @@ corr_matrix = numeric_features.corr('pearson')
 corr_with_target = corr_matrix['Total Interactions'].abs().sort_values(ascending=False)
 
 # %%
+# want to see what varaibles are most predictive but also if there are any variables 
+# that are essentially showing the same thing (ex. comment, share, and like when 
+# tracking total interactions)
 corr_with_target.head()
 
 # %%
