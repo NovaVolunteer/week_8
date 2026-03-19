@@ -62,7 +62,7 @@ plt.show()
 # %% 
 # plot of the log prices by neighborhood 
 # log transformation 
-df['log_price'] = np.log(df['Price'] + 1) 
+df['log_price'] = np.log(df['Price']) 
 # make the KDE plot, grouping the log price column by neighborhood
 df.groupby('Neighbourhood ')['log_price'].plot.kde()
 plt.title('KDE plot of the log prices by neighborhood')

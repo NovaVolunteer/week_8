@@ -1,0 +1,74 @@
+Q0. Please answer the following questions in your own words.
+
+1. What makes a model "linear"? "Linear" in what?
+
+A model is linear when the coefficients are linear, meaning that they are not 
+raised to any power and don’t have any other functions performed on them. 
+Traditional linear regression also has all of the variables as linear (meaning 
+they are just a number with no functions performed to it), but you can also  
+do linear regression where some or all of the variables are polynomial. 
+
+2. How do you interpret the coefficient for a dummy/one-hot-encoded variable? (This 
+is a trick question, and the trick involves how you handle the intercept of the  
+model.) There's further explanation at the end of this document, if needed.
+
+You interpret the coefficient for a one-hot-encoded variable as the value of 
+what would have been the coefficient for the dummy column that you had to drop. 
+Including all of the dummy columns and an intercept would be redundant because  
+all of the dummy columns sum to a column of ones, and the intercept is also a 
+column of ones. This means that when you drop one of the dummy columns and have 
+an intercept instead, the intercept takes on what would have been the coefficient 
+of that column (in the case that only one categorical variable, meaning their 
+corresponding set of dummy variables, is included). If you are regressing a 
+numeric variable on one categorical variable, then the intercept will be the 
+average of the numeric variable in the category that the dropped dummy column 
+represents.  
+
+3. Can linear regression be used for classification? Explain why, or why not.
+Linear regression can’t be used for classification. It creates a prediction for 
+a numeric variable using inputs of other numeric variables, meaning that the 
+information the model gives you is a prediction for a model, not a classification. 
+The only way this could possibly be used to classify something is if the variable 
+you’re trying to classify has numeric thresholds, and even then the model wouldn’t 
+give the classification, you’d have to use the numeric guess for the target 
+variable and compare that to the given thresholds to get the classification. 
+
+4. If you have a high accuracy on training but low on testing, what might be the 
+problem? It also might be you see a pattern in the residuals.
+
+This might mean that the model is overfit to the training data. If you include 
+too many variables, the model can get so specific to the training data that it 
+doesn’t work very well with any other data. Overfitting the model makes it not 
+useful, because it only really reflects the patterns in the training data and 
+not overall patterns, so the predictions on new data (what we’re using the model 
+for) won’t be very accurate. 
+
+5. Review this page: Non-Linear with Linear What are two ways to incorporate 
+nonlinear relationships between your target/response/dependent/outcome variable  
+and your features/control/response/independent variables ?
+
+One way to incorporate nonlinear relationships between your target variable and 
+your features is to use PolynomialFeatures to add more features to the data that 
+are polynomials of a feature (like a feature squared or cubed). Then, you can 
+still use linear regression which will also assign coefficients to the new 
+polynomial features, meaning that the regression will end up with a curved line, 
+looking more like a polynomial equation. Another way to incorporate nonlinear 
+relationships is to use a polynomial kernel with a set degree which will assign 
+different weights to some of the samples, creating a polynomial equation of the 
+given degree that represents the data. 
+
+6. What is the interpretation of the intercept? A slope coefficient for a variable? 
+The coefficient for a dummy/one-hot-encoded variable?
+
+The interpretation for the of the intercept is the value that the target variable 
+would have if the values for all of the variables in the model were zero. A slope 
+coefficient for a variable is how much the target variable increases when that 
+variable increases by one. This means that the slope coefficient shows how impactful 
+a variable is, with a high slope coefficient meaning that a small change in that 
+variable results in a large change in the target variable. The slope coefficient 
+can also be positive or negative, with a positive one meaning that the variable 
+increasing has a positive effect on the target variable and a negative one meaning 
+that an increase in the given variable has a negative relationship in the target 
+variable. The coefficient for a dummy variable is the difference between the average 
+value of the target variable for the category represented by the dummy variable and 
+the intercept of the model. 
