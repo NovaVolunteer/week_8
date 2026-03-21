@@ -228,12 +228,56 @@ print(f'For the test set with the joint model, R squared = {r2:.4f}, RMSE = {rms
 # For your best model with expanded features, what is the $R^2$ and `RMSE`? How does it 
 # compare to your best model from part 4?
 
+
 # %% 
+X = train[['Make_Year', 'Mileage_Run', 'No_of_Owners', 'Seating_Capacity']]
+# make y as the log price column 
+y = train['log_Price']
+X_test = test[['Make_Year', 'Mileage_Run', 'No_of_Owners', 'Seating_Capacity']]
+y_test = test['log_Price']
+# use a for loop to print the R squared and the RMSE for all degrees 1-10
 for i in range(10): 
-    poly = PolynomialFeatures(degree=2, include_bias=False)
+    poly = PolynomialFeatures(degree=i+1, include_bias=False)
     X_poly = poly.fit_transform(X)
     pol = LinearRegression().fit(X_poly, y)
-    y_pred_poly = pol.predict(X_poly)
+    X_poly_test = poly.fit_transform(X_test)
+    y_pred_poly = pol.predict(X_poly_test)
+    mse = mean_squared_error(y_test, y_pred_poly)
+    rmse = np.sqrt(mse)
+    r2 = r2_score(y_test, y_pred_poly)
+    print(f'For degree {i+1}, R squared = {r2:.4f}, RMSE = {rmse:.3f}')
+
+# %% [markdown]
+# When I increase the degree, the $R^2$ increases from degree 1 to 2 and from degree 2 to 3
+# but decreases from degree 3 to 4 and keeps decreasing after that. The RMSE follows the same 
+# pattern but inverted, with the RMSE decreasing from degree 1 to 2 and 2 to 3, but increases 
+# after that. This means that the model gets better at predicting based on the numeric variables 
+# when it has degree 2 or 3, but it gets less accurate when the degree is larger than 3. The 
+# $R^2$ goes negative on the test set when the model is degree 10. 
+
+# %% 
+# fit the model with degree 3 to all features (our best model from question 4) 
+# set X to be all columns of df except the price and log price columns 
+cols = list(train.drop(['Price', 'log_Price'], axis=1).columns)
+X = train[cols]
+# make y as the log price column 
+y = train['log_Price']
+
+# %% 
+# have the test versions of X and y be the same columns as above but from the test set 
+X_test = test[cols]
+y_test = test['log_Price']
+
+# %% 
+poly = PolynomialFeatures(degree=3, include_bias=False)
+X_poly = poly.fit_transform(X)
+pol = LinearRegression().fit(X_poly, y)
+X_poly_test = poly.fit_transform(X_test)
+y_pred_poly = pol.predict(X_poly_test)
+mse = mean_squared_error(y_test, y_pred_poly)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred_poly)
+print(f'For degree 3, R squared = {r2:.4f}, RMSE = {rmse:.3f}')
 
 # %% [markdown]
 #   6. For your best model so far, determine the predicted values for the test data and 
