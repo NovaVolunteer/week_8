@@ -240,7 +240,7 @@ for i in range(10):
     poly = PolynomialFeatures(degree=i+1, include_bias=False)
     X_poly = poly.fit_transform(X)
     pol = LinearRegression().fit(X_poly, y)
-    X_poly_test = poly.fit_transform(X_test)
+    X_poly_test = poly.transform(X_test)
     y_pred_poly = pol.predict(X_poly_test)
     mse = mean_squared_error(y_test, y_pred_poly)
     rmse = np.sqrt(mse)
@@ -253,31 +253,10 @@ for i in range(10):
 # pattern but inverted, with the RMSE decreasing from degree 1 to 2 and 2 to 3, but increases 
 # after that. This means that the model gets better at predicting based on the numeric variables 
 # when it has degree 2 or 3, but it gets less accurate when the degree is larger than 3. The 
-# $R^2$ goes negative on the test set when the model is degree 10. 
+# $R^2$ goes negative on the test set when the model is degree 10. The best model with these 
+# expanded features is of degree 3, which has a $R^2$ of 0.4179 and a RMSE of 0.333. These are 
+# both worse than my best model from question 4, as that has a $R^2$ of 0.8139 and a RMSE of 0.188.
 
-# %% 
-# fit the model with degree 3 to all features (our best model from question 4) 
-# set X to be all columns of df except the price and log price columns 
-cols = list(train.drop(['Price', 'log_Price'], axis=1).columns)
-X = train[cols]
-# make y as the log price column 
-y = train['log_Price']
-
-# %% 
-# have the test versions of X and y be the same columns as above but from the test set 
-X_test = test[cols]
-y_test = test['log_Price']
-
-# %% 
-poly = PolynomialFeatures(degree=3, include_bias=False)
-X_poly = poly.fit_transform(X)
-pol = LinearRegression().fit(X_poly, y)
-X_poly_test = poly.fit_transform(X_test)
-y_pred_poly = pol.predict(X_poly_test)
-mse = mean_squared_error(y_test, y_pred_poly)
-rmse = np.sqrt(mse)
-r2 = r2_score(y_test, y_pred_poly)
-print(f'For degree 3, R squared = {r2:.4f}, RMSE = {rmse:.3f}')
 
 # %% [markdown]
 #   6. For your best model so far, determine the predicted values for the test data and 
@@ -285,3 +264,67 @@ print(f'For degree 3, R squared = {r2:.4f}, RMSE = {rmse:.3f}')
 #  up along the diagonal, or not? Compute the residuals/errors for the test data and 
 # create a kernel density plot. Do the residuals look roughly bell-shaped around zero? 
 # Evaluate the strengths and weaknesses of your model.
+
+# %% 
+# take the best model and use it to make predictions on the test set 
+
+# make the X and y of our best model 
+# combine both models - use all of the columns except for price and log_Price 
+# make a list of all columns except for price and log_price 
+cols = list(train.drop(['Price', 'log_Price'], axis=1).columns)
+X = train[cols]
+# make y as the log price column 
+y_target = train['log_Price']
+
+# %% 
+# initalize and fit the model 
+model = LinearRegression().fit(X, y_target)
+
+# %% 
+# make X and y based on the test set
+X_test = test[cols]
+y_test = test['log_Price']
+
+# %%
+# find the predicted values for y based on the test set 
+y_pred = model.predict(X_test)
+
+# %% 
+# plot the true values and the predicted values in a scatter plot 
+plt.scatter(y_test, y_pred)
+plt.title('True values vs. predicted values')
+plt.xlabel('True values (log price)')
+plt.ylabel('Predicted values (log price)')
+# add a diagonal line that runs from the lowest value in y_test to the highest (gives the 
+# line of perfect predictions since the X and Y values are equal)
+plt.plot([y_test.min(), y_test.max()],
+         [y_test.min(), y_test.max()],
+         color='red')
+plt.show()
+
+# %% [markdown]
+# The scatter plot of the true and predicted values does cluster around the diagonal line. 
+
+# %% 
+# residuals plot 
+resid  = y_test - y_pred
+sns.kdeplot(resid, fill=True)
+plt.axvline(0, color='red', linestyle='--') 
+plt.title("KDE Plot of Residuals")
+plt.xlabel("Residuals")
+plt.ylabel("Density")
+plt.show()
+
+# %% [markdown]
+# The KDE plot of residuals does look roughly bell shaped around 0. It's a little bit skewed, 
+# but the overall shape is quite close to a bell curve and it's still centered close to 0. 
+# A strength of my model is that it's decently good at predicting the log price of a car based 
+# on the information about the car. It covers about 81% of the variability in the data and the 
+# root mean squared error is 0.188 while the log prices range from about 12.5 to 14.5. This means 
+# that the prediction the model gives is usually within a 10% range of the log prices, which is 
+# better than if a human who didn't know about cars tried to make a prediction. A weakness of the 
+# model is that it includes a lot of features, as most of the features in the original data set 
+# were categorical, meaning that dummy variables had to be made for them and some of them, like make,
+# had a lot of possible values, meaning that a lot of dummy variables were created for them. This 
+# means that there's a chance it was overfit to the data, however, the model still performed the best
+# out of all the ones tested on the test data. 
