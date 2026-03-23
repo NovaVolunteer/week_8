@@ -235,4 +235,41 @@ print(f'R squared = {r2:.4f}, RMSE = {rmse:.3f}')
 
 # %% [markdown]
 # 5. Which model performed the best, and why?
+# 
+# The model of degree 2 that included all of the features I decided 
+# to use ('Adjusted Offensive Efficiency, Adjusted Defensive Efficiency, 
+# Effective Field Goal Perentage, Effective Field Goal Percentage Allowed, 
+# Turnover Rate, Defensive Turnover (steal) rate, Offensive Rebounds, 
+# Defensive Rebounds, Adjusted Tempo, Free Throw Rate, and Devensive Free 
+# Throw Rate) was the besst at predicting the wins above the bubble. It 
+# had both the highest $R^2$ value of all the models, indicating that over 
+# 90% of the variability in the data was contained in the model, and it had 
+# the lowest RMSE (just about 2), meaning that the model's predictions for 
+# wins above bubble were, on average, within 2 games of the actual value. 
+# I think that this model performed the best because it took the most 
+# information in, while still making sure that no statistics were represented
+# multiple times (such as if we included 2 point rate and 3 point rate when 
+# those are already encapsulated in effective field goal percentage). Even 
+# when looking at a totally new data set (the 2026 stats), the model still 
+# performed extremely well, and actually was better than it was on the test set. 
+
+# %% [markdown]
 # 6. What did you learn?
+# 
+# One interesting thing I learned is how the $R^2$ and RMSE change when the 
+# degree of data included changes. When only regressing on two features that were
+# highly correlated with the target variable (ADJOE and ADJDE), the $R^2$ and RMSE 
+# stayed pretty consistent for degrees 1-9 and then started to change more drastically 
+# at degree 10 (even though this still wasn't a drastic change compared to other models
+# that included more features). When I regressed on Offensive Effective Field Goal 
+# Percentage, Defensive Effective Field Goal Percentage, Free Throw Rate, and Free 
+# Throw Rate Defensively, which were less correlated features with Wins Above Bubble, 
+# the $R^2$ and RMSE on the test set started to get dramatically worse starting with 
+# degree 7, showing that the model was getting overfit quickly. For the model with all 
+# features listed above included, you can see that the model starts to get signifigantly 
+# worse at degree 4 and likely goes negative quickly (I didn't compute past degree 4 since
+# so many features were included so I didn't risk crashing the kernel). This shows that 
+# the more features are included, the easier it is to overfit the model when chanding the 
+# degree of the polynomial features. This is a good thing to know, as intuitively it seems 
+# like more information would be better, and it is to an extent, but too much can make the 
+# model not work as well on new data. 
