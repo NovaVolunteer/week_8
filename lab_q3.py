@@ -54,6 +54,10 @@ df.head()
 cbb = df[['ADJOE', 'ADJDE', 'EFG_O', 'EFG_D', 'TOR', 'TORD', 'ORB', 'DRB', 'ADJ_T', 'FTR', 'FTRD', 'WAB']]
 
 # %% 
+# look at the description of cbb to see information about these features 
+cbb.describe()
+
+# %% 
 # I want to make a correlation matrix on the features I'm using and the target variable to ensure 
 # that none of them are too correlated and that they will be helpful for my model. 
 corr_matrix = cbb.corr('pearson')
@@ -176,7 +180,58 @@ for i in range(10):
     print(f'For degree {i+1}, R squared = {r2:.4f}, RMSE = {rmse:.3f}')
 
 # %% [markdown]
-# We can see that this model performs worse than the first one, especially at higher degrees 
+# We can see that this model performs worse than the first one, especially at higher degrees
+
+# %% 
+# run the same loop, making the model use all features in cbb
+X = train.drop('WAB', axis=1) 
+y = train['WAB']
+# make same X and y using the test set 
+X_test = test.drop('WAB', axis=1)
+y_test = test['WAB']
+
+# %% 
+# use a lower range since this has more features so that the kernel doesn't crash 
+for i in range(4): 
+    poly = PolynomialFeatures(degree=i+1, include_bias=False)
+    X_poly = poly.fit_transform(X)
+    pol = LinearRegression().fit(X_poly, y)
+    X_poly_test = poly.transform(X_test)
+    y_pred_poly = pol.predict(X_poly_test)
+    mse = mean_squared_error(y_test, y_pred_poly)
+    rmse = np.sqrt(mse)
+    r2 = r2_score(y_test, y_pred_poly)
+    print(f'For degree {i+1}, R squared = {r2:.4f}, RMSE = {rmse:.3f}')
+
+# %% [markdown] 
+# This gives us our best-performing model so far (degree 2), with a $R^2$ on the test set of 0.9113
+# and a RMSE of 2.071. This RMSE is very good, as the range of wins against bubble ranges from 
+# -25.2 to 13.1, a range of 38.3, meaning that the RMSE of 2.071 will give a very good idea of
+# the number of wins against bubble a team will have. To see the effectiveness of this model 
+# against more data, I also want to test it on the data from 2026 which includes all of the games 
+# up until March Madness started. 
+
+# %% 
+cbb26 = pd.read_csv(os.path.join(path, "cbb26.csv"))
+cbb26 = cbb26[['ADJOE', 'ADJDE', 'EFG_O', 'EFG_D', 'TOR', 'TORD', 'ORB', 'DRB', 'ADJ_T', 'FTR', 'FTRD', 'WAB']]
+
+# %%
+X_test = cbb26.drop('WAB', axis=1)
+y_test = cbb26['WAB']
+
+# %% 
+poly = PolynomialFeatures(degree=2, include_bias=False)
+X_poly = poly.fit_transform(X)
+pol = LinearRegression().fit(X_poly, y)
+X_poly_test = poly.transform(X_test)
+y_pred_poly = pol.predict(X_poly_test)
+mse = mean_squared_error(y_test, y_pred_poly)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred_poly)
+print(f'R squared = {r2:.4f}, RMSE = {rmse:.3f}')
+
+# %% [markdown]
+# This model actually works even better on the data from 2026! 
 
 # %% [markdown]
 # 5. Which model performed the best, and why?
