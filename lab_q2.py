@@ -44,7 +44,8 @@ df.info()
 # because there's an inherent order in the number of owners that a car has had, meaning that the 
 # difference between 1 and 3 versus 1 and 2 is meaningful. Price has some extreme outliers, so we 
 # can do a log transformation on it to reduce the infulence of those outliers. I'm choosing to do 
-# a log transformation because price is always positive. Since Make_year only 
+# a log transformation because price is always positive. Mileage_Rum is also skewed, so we can do 
+# a log transformation on this too. Since Make_year only 
 # ranges from 2011 to 2022, we can center it to be years since 2011.
 
 # %% 
@@ -60,6 +61,7 @@ df['No_of_Owners'] = df['No_of_Owners'].astype(int)
 # %% 
 # do log transformations on the price column using np.log()
 df['log_Price'] = np.log(df['Price'])
+df['log_Mileage_Run'] = np.log(df['Mileage_Run'])
 
 # %% 
 # center the Make_year column so it represents years since 2011
@@ -218,7 +220,7 @@ print(f'For the test set with the joint model, R squared = {r2:.4f}, RMSE = {rms
 # The joint model performs better than the other two by a pretty signifigant amount. The R 
 # squared for the test set is 0.81, which is larger than the R squared of 0.65 and 0.38 for 
 # the categorical and numeric models respectively. The root mean squared error is also lower, 
-# being 0.188 (log value) compared to 0.257 and 0.345. This means that the joint model is 
+# being 0.187 (log value) compared to 0.257 and 0.345. This means that the joint model is 
 # pretty clearly the best model to use. 
 
 # %% [markdown]
@@ -328,3 +330,4 @@ plt.show()
 # had a lot of possible values, meaning that a lot of dummy variables were created for them. This 
 # means that there's a chance it was overfit to the data, however, the model still performed the best
 # out of all the ones tested on the test data. 
+# %%

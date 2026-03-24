@@ -163,8 +163,9 @@ print(f'For the test set, R squared = {r2:.4f}, RMSE = {rmse:.3f}')
 print(f'Coefficient for Review Scores Rating = {model4.coef_[0]:.4f}')
 
 # %% [markdown]
-# The R squared for the test set is 0.0459, meaning that not much of the variability in price (for the test set) is 
-# represented in this model. The RMSE is 140.918, which means that, on average, the model predicts the price for the 
+# The R squared for the test set is 0.0459, meaning that there is not really a linear relationship between the features 
+# in X (review scores rating and neighnorhood) and the target variable (price)
+# The RMSE is 140.918, which means that, on average, the model predicts the price for the 
 # test set about $141 away from the actual price. The most expensive type of property you can rent is in Manhattan. 
 
 # %% [markdown]
